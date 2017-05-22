@@ -1,0 +1,15 @@
+
+Previous attempt to write OU noise class:
+
+sim_example.py:	    	     driver script
+generate_noise_OU_NEST.py    attempt at a simple attempt (without writing a 
+			     proper class: probably npot going to work)
+generate_noise_conductances_NEST.py: same
+
+
+Python version of MATLAB scripts used in 2014 paper:
+
+generate_stim_test.py	    driver script
+generate_stim.py	    generate stimulus sequence into cell triplet
+generate_noise_conductances.py 	     generate noise sequence (** what we need to 
+				     recreate, but using NEST machinery **)
