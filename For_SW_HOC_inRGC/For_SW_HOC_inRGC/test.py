@@ -79,7 +79,7 @@ def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
 
 dt = 1.0
 mu, sigma = noise_params(0., 1., dt=dt)
-print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
+#print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 V, t, ts = simulate(mu, sigma, dt=dt)
 V_mean_th = V_mean(t, mu)
