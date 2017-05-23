@@ -3,6 +3,12 @@ import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 
+
+import sys
+sys.path.append('/Users/plesser/NEST/code/trunk/bld_fixes_mpi/install/lib/python2.7/site-packages/')
+
+import nest
+
 def noise_params(V_mean, V_std, dt=1.0, tau_m=10., C_m=250.):
     'Returns mean and std for noise generator for parameters provided; defaults for iaf_psc_alpha.'
     
@@ -30,10 +36,6 @@ def V_std(t, sigma, dt=1.0, tau_m=10., C_m=250.):
   
 
 
-import sys
-sys.path.append('/Users/plesser/NEST/code/trunk/bld_fixes_mpi/install/lib/python2.7/site-packages/')
-
-import nest/2.12.0 as nest
 
 def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
     '''
