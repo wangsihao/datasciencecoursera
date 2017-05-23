@@ -2,7 +2,7 @@ import math
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
-%matplotlib inline
+
 
 def noise_params(V_mean, V_std, dt=1.0, tau_m=10., C_m=250.):
   'Returns mean and std for noise generator for parameters provided; defaults for iaf_psc_alpha.'
