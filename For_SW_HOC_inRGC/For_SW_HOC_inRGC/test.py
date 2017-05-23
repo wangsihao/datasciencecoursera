@@ -1,7 +1,8 @@
-import sympy
-sympy.init_printing()
-x = sympy.Symbol('x')
-sympy.series((1-sympy.exp(-x))/(1+sympy.exp(-x)),x)
+import math
+import numpy as np
+import scipy
+import matplotlib.pyplot as plt
+%matplotlib inline
 
 
 
