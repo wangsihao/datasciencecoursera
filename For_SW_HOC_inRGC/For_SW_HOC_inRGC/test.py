@@ -34,7 +34,7 @@ def V_std(t, sigma, dt=1.0, tau_m=10., C_m=250.):
 import sys
 sys.path.append('/Users/plesser/NEST/code/trunk/bld_fixes_mpi/install/lib/python2.7/site-packages/')
 
-import nest
+#import nest
 
 def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
     '''
