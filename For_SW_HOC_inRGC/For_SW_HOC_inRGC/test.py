@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 
 
 def noise_params(V_mean, V_std, dt=1.0, tau_m=10., C_m=250.):
-  'Returns mean and std for noise generator for parameters provided; defaults for iaf_psc_alpha.'
-  
-  return C_m / tau_m * V_mean, math.sqrt(2/(tau_m*dt))*C-m*V_std
+    'Returns mean and std for noise generator for parameters provided; defaults for iaf_psc_alpha.'
+    
+    return C_m / tau_m * V_mean, math.sqrt(2/(tau_m*dt))*C_m*V_std
 
 def V_asymptotic(mu, sigma, dt=1.0, tau_m=10., C_m=250.):
     'Returns asymptotic mean and std of V_m'
