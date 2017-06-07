@@ -96,3 +96,5 @@ plt.legend()
 plt.xlabel('Time $t$ [ms]')
 plt.ylabel('Membrane potential $V_m$ [mV]')
 plt.xlim(0, 50);
+
+plt.show()
