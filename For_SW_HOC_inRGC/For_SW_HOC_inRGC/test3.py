@@ -43,7 +43,7 @@ def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
 
 
     ng = nest.Create('noise_generator', params={'mean': mu, 'std': sigma, 'dt': dt})
-    vm = nest.Create('voltmeter')
+    vm = nest.Create('voltmeter', params={'interval': 0.001})
     nrns = nest.Create('iaf_psc_alpha')
     nest.Connect(ng, nrns)
     nest.Connect(vm, nrns)
