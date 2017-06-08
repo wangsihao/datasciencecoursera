@@ -1,3 +1,25 @@
+import sympy as sp
+sp.init_printing(use_latex=True)
+from sympy.matrices import zeros
+tau_m, tau_s, C, h = sp.symbols('tau_m, tau_s, C, h')
+
+A = sp.Matrix([[-1/tau_s,0,0],[1,-1/tau_s,0],[0,1/C,-1/tau_m]])
+
+PA = sp.simplify(sp.exp(A*h))
+PA
+
+As = sp.Matrix([[-1/tau_m,0,0],[1,-1/tau_m,0],[0,1/C,-1/tau_m]])
+As
+
+PAs = sp.simplify(sp.exp(As*h))
+PAs
+
+PA_32 = PA.row(2).col(1)[0]
+sp.limit(PA_32, tau_s, tau_m)
+
+PA_32_series = PA_32.series(x=tau_s,x0=tau_m,n=2)
+PA_32_series
+
 import nest
 import numpy as np
 import pylab as pl
