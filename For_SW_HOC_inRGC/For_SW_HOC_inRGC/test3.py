@@ -64,17 +64,19 @@ dt = 0.1
 mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
-t, s, v = simulate(mu, sigma, dt=dt)
+#t, s, v = simulate(mu, sigma, dt=dt)
+t, s, v = simulate(0, 1, dt=dt)
 plt.plot(t,v,'--',color='red',label='dt = 0.1')
 
 
 
-dt = 0.01
+dt = 0.001
 mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
-t, s, v = simulate(mu, sigma, dt=dt)
-plt.plot(t,v,'--',color='blue',label='dt = 0.01')
+#t, s, v = simulate(mu, sigma, dt=dt)
+t, s, v = simulate(0, 10, dt=dt)
+plt.plot(t,v,'--',color='blue',label='dt = 0.001')
 
 plt.legend()
 plt.xlabel('time t (ms)')
