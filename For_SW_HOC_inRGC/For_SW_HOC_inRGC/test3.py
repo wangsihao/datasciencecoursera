@@ -75,7 +75,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 t, s, v = simulate(mu, sigma, dt=dt)
-plt.plot(t,v,'--',color='black',label='dt = 0.2')
+plt.plot(t,v,'--',color='blue',label='dt = 0.2')
 
 plt.legend()
 plt.xlabel('time t (ms)')
