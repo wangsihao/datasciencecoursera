@@ -38,29 +38,18 @@ def V_std(t, sigma, dt=1.0, tau_m=10., C_m=250.):
 
 
 def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
-    '''
-    Simulate an ensemble of N iaf_neurons driven by noise_generator.
-    
-    Returns
-    - voltage matrix, one column per neuron
-    - time axis indexing matrix rows
-    - time shift due to delay, time at which first current arrives
-    '''
-    
-    resolution = 0.1
 
-    nest.ResetKernel()
-    nest.SetKernelStatus({'resolution': resolution})
+    
+
+
     ng = nest.Create('noise_generator', params={'mean': mu, 'std': sigma, 'dt': dt})
     vm = nest.Create('voltmeter',params={'interval':dt})
-    nrns = nest.Create('iaf_psc_alpha', N, params={'E_L': 0., 'V_m': 0., 'V_th': 1e6,
-                                                'tau_m': tau_m, 'C_m': C_m})
+    nrns = nest.Create('iaf_psc_alpha')
     nest.Connect(ng, nrns)
     nest.Connect(vm, nrns)
     
     nest.Simulate(t_max)
     
-    # convert data into time axis vector and matrix with one column per neuron
     ev = nest.GetStatus(vm, keys=['events'])[0][0]
     t, s, v = ev['times'], ev['senders'], ev['V_m']
 
