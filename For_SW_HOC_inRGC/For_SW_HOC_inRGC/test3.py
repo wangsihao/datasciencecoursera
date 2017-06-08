@@ -57,7 +57,7 @@ def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
                                           'interval': resolution})
     nrns = nest.Create('iaf_psc_alpha', N, params={'E_L': 0., 'V_m': 0., 'V_th': 1e6,
                                                 'tau_m': tau_m, 'C_m': C_m})
-    nest.Connect(ng, nrns, syn_spec={'delay': delay})
+    nest.Connect(ng, nrns)
     nest.Connect(vm, nrns)
     
     nest.Simulate(t_max)
