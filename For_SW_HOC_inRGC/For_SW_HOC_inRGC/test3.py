@@ -71,7 +71,7 @@ plt.ylabel('voltage V (mV)')
 plt.xlim(0, 50);
 '''
 
-dt = 0.001
+dt = 1.0
 mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
