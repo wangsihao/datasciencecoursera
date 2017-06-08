@@ -48,13 +48,11 @@ def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
     '''
     
     resolution = 0.1
-    delay = 1.0
 
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': resolution})
     ng = nest.Create('noise_generator', params={'mean': mu, 'std': sigma, 'dt': dt})
-    vm = nest.Create('voltmeter', params={'record_to': ['memory'], 'withtime': True,
-                                          'interval': resolution})
+    vm = nest.Create('voltmeter',params={'interval':dt})
     nrns = nest.Create('iaf_psc_alpha', N, params={'E_L': 0., 'V_m': 0., 'V_th': 1e6,
                                                 'tau_m': tau_m, 'C_m': C_m})
     nest.Connect(ng, nrns)
