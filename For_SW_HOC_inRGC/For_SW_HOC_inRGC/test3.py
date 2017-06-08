@@ -70,12 +70,12 @@ plt.xlabel('time t (ms)')
 plt.ylabel('voltage V (mV)')
 
 
-dt = 0.2
+dt = 0.3
 mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 t, s, v = simulate(mu, sigma, dt=dt)
-plt.plot(t,v,'--',color='blue',label='dt = 0.2')
+plt.plot(t,v,'--',color='blue',label='dt = 0.3')
 
 plt.legend()
 plt.xlabel('time t (ms)')
