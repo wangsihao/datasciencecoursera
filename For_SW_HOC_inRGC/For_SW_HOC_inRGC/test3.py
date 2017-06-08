@@ -58,7 +58,7 @@ def simulate(mu, sigma, dt=1.0, tau_m=10., C_m=250., N=1000, t_max=50.):
     
     return t, s, v
   
-'''
+
 
 dt = 0.1
 mu, sigma = noise_params(0., 1., dt=dt)
@@ -67,11 +67,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 t, s, v = simulate(mu, sigma, dt=dt)
 plt.plot(t,v,'--',color='red',label='dt = 0.1')
 
-plt.legend()
-plt.xlabel('time t (ms)')
-plt.ylabel('voltage V (mV)')
-plt.xlim(0, 50);
-'''
+
 
 dt = 0.01
 mu, sigma = noise_params(0., 1., dt=dt)
