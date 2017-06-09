@@ -2,7 +2,7 @@ import math
 import numpy as np
 import scipy
 import matplotlib.pyplot as plt
-
+import matplotlib.mlab as mlab
 
 import sys
 sys.path.append('/Users/plesser/NEST/code/trunk/bld_fixes_mpi/install/lib/python2.7/site-packages/')
@@ -62,6 +62,13 @@ plt.legend()
 plt.xlabel('time t (ms)')
 plt.ylabel('voltage V (mV)')
 plt.xlim(0, 5000);
+
+n,bins,patches = plt.hist(v,5,normed,facecolor = 'green', alpha = 0.75)
+y = mlab.normpdf( bins, mu, sigma)
+l = plt.plot(bins, y, 'r--', linewidth = 1)
+plt.xlabel('Voltage')
+plt.ylabel('Probability')
+plt.grid('True')
 
 
 plt.show()
