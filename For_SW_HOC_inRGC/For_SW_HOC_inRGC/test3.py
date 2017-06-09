@@ -38,7 +38,7 @@ def simulate(mu, sigma, dt=1.0, t_max=5000.):
     
     return t, s, v
   
-
+plt.figure(1)
 
 dt = 0.1
 mu, sigma = noise_params(0., 1., dt=dt)
@@ -46,6 +46,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
 t, s, v = simulate(0., 1., dt=dt)
+plt.subplot(1)
 plt.plot(t,v,'--',color='red',label='dt = 0.1')
 
 
@@ -56,6 +57,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
 t, s, v = simulate(0., 10., dt=dt)
+plt.subplot(2)
 plt.plot(t,v,'--',color='blue',label='dt = 0.001')
 
 plt.legend()
@@ -63,9 +65,10 @@ plt.xlabel('time t (ms)')
 plt.ylabel('voltage V (mV)')
 plt.xlim(0, 5000);
 
-n,bins,patches = plt.hist(v,5,normed,facecolor = 'green', alpha = 0.75)
+n,bins,patches = plt.hist(v,5,facecolor = 'green', alpha = 0.75)
 y = mlab.normpdf( bins, mu, sigma)
-l = plt.plot(bins, y, 'r--', linewidth = 1)
+plt.subplot(3)
+l = plt.plot(bins, y, 'r--', linewidth = 1,label='dt = 0.001')
 plt.xlabel('Voltage')
 plt.ylabel('Probability')
 plt.grid('True')
