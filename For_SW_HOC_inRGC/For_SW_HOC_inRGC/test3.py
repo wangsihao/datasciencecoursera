@@ -45,24 +45,20 @@ mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
-t, s, v = simulate(0., 100., dt=dt)
+t, s, v1 = simulate(0., 100., dt=dt)
 plt.subplot(211)
-plt.plot(t,v,'--',color='red',label='dt = 0.1')
+plt.plot(t,v1,'--',color='red',label='dt = 0.1')
 
-n1, bins1, patches1 = plt.hist(v, 50, normed=1, facecolor='green', alpha=0.75)
+
 
 dt = 0.001
 mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
-t, s, v = simulate(0., 1000., dt=dt)
+t, s, v2 = simulate(0., 1000., dt=dt)
 plt.subplot(212)
-plt.plot(t,v,'--',color='blue',label='dt = 0.001')
-
-
-n2, bins2, patches2 = plt.hist(v, 50, normed=1, facecolor='red', alpha=0.75)
-
+plt.plot(t,v2,'--',color='blue',label='dt = 0.001')
 
 plt.legend()
 plt.xlabel('time t (ms)')
@@ -71,13 +67,20 @@ plt.xlim(0, 5000);
 
 
 
+
 plt.figure(2)
-
-
 plt.subplot(221)
-plt.plot(bins2, label='dt = 0.001')
-plt.xlabel('Voltage')
-plt.ylabel('Probability')
+plt.hist(v1,bins = 0.1)
+plt.subplot(222)
+plt.hist(v2,bins = 0.1)
+
+
+
+
+
+
+
+
 
 
 
