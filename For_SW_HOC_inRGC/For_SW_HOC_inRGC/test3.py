@@ -75,7 +75,7 @@ plt.figure(2)
 
 
 plt.subplot(221)
-plt.plot(bins, label='dt = 0.001')
+plt.plot(bins2, label='dt = 0.001')
 plt.xlabel('Voltage')
 plt.ylabel('Probability')
 
