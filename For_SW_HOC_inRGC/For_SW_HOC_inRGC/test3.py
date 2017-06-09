@@ -50,6 +50,10 @@ plt.subplot(211)
 plt.plot(t,v1,'--',color='red',label='dt = 0.1')
 
 
+plt.legend()
+plt.xlabel('time t (ms)')
+plt.ylabel('voltage V (mV)')
+plt.xlim(0, 5000);
 
 dt = 0.001
 mu, sigma = noise_params(0., 1., dt=dt)
