@@ -45,7 +45,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
-t, s, v = simulate(0., 1., dt=dt)
+t, s, v = simulate(0., 100., dt=dt)
 plt.subplot(211)
 plt.plot(t,v,'--',color='red',label='dt = 0.1')
 
@@ -56,7 +56,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
-t, s, v = simulate(0., 10., dt=dt)
+t, s, v = simulate(0., 1000., dt=dt)
 plt.subplot(212)
 plt.plot(t,v,'--',color='blue',label='dt = 0.001')
 
