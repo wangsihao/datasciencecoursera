@@ -70,9 +70,9 @@ plt.xlim(0, 5000);
 
 plt.figure(2)
 plt.subplot(221)
-plt.hist(v1,bins = 10)
+plt.hist(v1,bins = 5)
 plt.subplot(222)
-plt.hist(v2,bins = 10)
+plt.hist(v2,bins = 5)
 
 
 
