@@ -17,7 +17,7 @@ def noise_params(V_mean, V_std, dt=1.0, tau_m=10., C_m=250.):
 
 
 
-def simulate(mu, sigma, dt=1.0, t_max=50.):
+def simulate(mu, sigma, dt=1.0, t_max=5000.):
 
     
     resolution = 0.001
@@ -45,7 +45,7 @@ mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
-t, s, v = simulate(0., 1., dt=dt)
+t, s, v = simulate(0., 100., dt=dt)
 plt.plot(t,v,'--',color='red',label='dt = 0.1')
 
 
@@ -55,13 +55,13 @@ mu, sigma = noise_params(0., 1., dt=dt)
 #print "mu = {:.2f}, sigma = {:.2f}".format(mu, sigma)
 
 #t, s, v = simulate(mu, sigma, dt=dt)
-t, s, v = simulate(0., 10., dt=dt)
+t, s, v = simulate(0., 1000., dt=dt)
 plt.plot(t,v,'--',color='blue',label='dt = 0.001')
 
 plt.legend()
 plt.xlabel('time t (ms)')
 plt.ylabel('voltage V (mV)')
-plt.xlim(0, 50);
+plt.xlim(0, 5000);
 
 
 plt.show()
