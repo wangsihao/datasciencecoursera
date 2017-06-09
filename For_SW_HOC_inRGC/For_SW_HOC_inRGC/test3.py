@@ -65,13 +65,15 @@ plt.xlabel('time t (ms)')
 plt.ylabel('voltage V (mV)')
 plt.xlim(0, 5000);
 
+
+'''
 n,bins,patches = plt.hist(v,5,facecolor = 'green', alpha = 0.75)
 y = mlab.normpdf( bins, mu, sigma)
 plt.subplot(221)
 l = plt.plot(bins, y, 'r--', linewidth = 1,label='dt = 0.001')
 plt.xlabel('Voltage')
 plt.ylabel('Probability')
-
+'''
 
 
 plt.show()
