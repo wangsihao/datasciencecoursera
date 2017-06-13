@@ -17,17 +17,17 @@ def noise_params(V_mean, V_std, dt=1.0, tau_m=10., C_m=250.):
 
 
 
-def simulate(mu, sigma, dt=1.0, t_max=5000.):
+def simulate(mu, sigma, dt=1.0, t_max=5000., tau = 10.):
 
     
     resolution = 0.001
     
     nest.ResetKernel()
     nest.SetKernelStatus({'resolution': resolution})
-    ng = nest.Create('noise_generator', params={'mean': mu, 'std': sigma, 'dt': dt})
+    ou = nest.Create('ou_generator', params={'mean': mu, 'std': sigma, 'dt': dt, 'tau': tau})
     vm = nest.Create('voltmeter', params={'interval': resolution})
     nrns = nest.Create('iaf_psc_alpha')
-    nest.Connect(ng, nrns)
+    nest.Connect(ou, nrns)
     nest.Connect(vm, nrns)
     
     nest.Simulate(t_max)
