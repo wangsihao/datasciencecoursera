@@ -56,9 +56,12 @@ RecordablesMap< ou_generator >::create()
 nest::ou_generator::Parameters_::Parameters_()
   : mean_( 0.0 )    // pA
   , std_( 0.0 )     // pA / sqrt(s)
+  // comment some variables, 重要 
+  /*
   , std_mod_( 0.0 ) // pA / sqrt(s)
   , freq_( 0.0 )    // Hz
   , phi_deg_( 0.0 ) // degree
+  */
   , dt_( Time::ms( 1.0 ) )
   , num_targets_( 0 )
   //added for tau, 重要
@@ -69,7 +72,7 @@ nest::ou_generator::Parameters_::Parameters_()
 nest::ou_generator::Parameters_::Parameters_( const Parameters_& p )
   : mean_( p.mean_ )
   , std_( p.std_ )
-  , std_mod_( p.std_mod_ )
+  //, std_mod_( p.std_mod_ )
   , freq_( p.freq_ )
   , phi_deg_( p.phi_deg_ )
   , dt_( p.dt_ )
@@ -92,9 +95,11 @@ operator=( const Parameters_& p )
 
   mean_ = p.mean_;
   std_ = p.std_;
+  /*
   std_mod_ = p.std_mod_;
   freq_ = p.freq_;
   phi_deg_ = p.phi_deg_;
+  */
   dt_ = p.dt_;
   //added for tau, 重要
   tau_ = p.tau_;
@@ -127,9 +132,12 @@ nest::ou_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::mean ] = mean_;
   ( *d )[ names::std ] = std_;
+  // comment some variables, 重要   
+  /*
   ( *d )[ names::std_mod ] = std_mod_;
   ( *d )[ names::dt ] = dt_.get_ms();
   ( *d )[ names::phase ] = phi_deg_;
+  */
   ( *d )[ names::frequency ] = freq_;
   //added for tau, 重要
   ( *d )[ names::tau ] = tau_;
@@ -148,9 +156,12 @@ nest::ou_generator::Parameters_::set( const DictionaryDatum& d,
 {
   updateValue< double >( d, names::mean, mean_ );
   updateValue< double >( d, names::std, std_ );
+  // comment some variables, 重要 
+  /*
   updateValue< double >( d, names::std_mod, std_mod_ );
   updateValue< double >( d, names::frequency, freq_ );
   updateValue< double >( d, names::phase, phi_deg_ );
+  */
   //added for tau, 重要
   updateValue< double >( d, names::tau, tau_ );
   double dt;
@@ -162,17 +173,19 @@ nest::ou_generator::Parameters_::set( const DictionaryDatum& d,
   {
     throw BadProperty( "The standard deviation cannot be negative." );
   }
+  /*
   if ( std_mod_ < 0 )
   {
     throw BadProperty( "The standard deviation cannot be negative." );
   }
+  
   if ( std_mod_ > std_ )
   {
     throw BadProperty(
       "The modulation apmlitude must be smaller or equal to the baseline "
       "amplitude." );
   }
-
+  */
   if ( not dt_.is_step() )
   {
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );

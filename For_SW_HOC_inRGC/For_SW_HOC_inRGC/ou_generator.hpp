@@ -177,9 +177,11 @@ private:
   {
     double mean_;    //!< mean current, in pA
     double std_;     //!< standard deviation of current, in pA
+    /*
     double std_mod_; //!< standard deviation of current modulation, in pA
     double freq_;    //!< Standard frequency in Hz
     double phi_deg_; //!< Phase of sinusodial ou modulation (0-360 deg)
+    */
     //added for tau, 重要 
     double tau_; //!< added tau
     Time dt_;        //!< time interval between updates
