@@ -1,0 +1,6 @@
+My (AKB) old readme from ManeFrame (Dec. 2015):
+
+To do before running NEST script:
+
+>> module load python/3.4.2
+>> module load nest/2.6.0

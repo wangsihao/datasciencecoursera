@@ -1,0 +1,165 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+%\usepackage{epic,eepic}
+
+%\usepackage{graphics}
+\usepackage{graphicx}
+%\usepackage{epstopdf}
+
+
+% To use Author, Year (Harvard) citations
+%\usepackage[round]{natbib}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+
+\usepackage{fullpage}
+
+\newcommand{\vvec}{\mathbf{v}}
+\newcommand{\Avec}{\mathbf{A}}
+\newcommand{\Cvec}{\mathbf{C}}
+\newcommand{\Gvec}{\mathbf{G}}
+\newcommand{\Hvec}{\mathbf{H}}
+
+\newcommand{\Ivec}{\mathbf{I}}
+\newcommand{\Jvec}{\mathbf{J}}
+\newcommand{\Kvec}{\mathbf{K}}
+\newcommand{\Lvec}{\mathbf{L}}
+\newcommand{\Mvec}{\mathbf{M}}
+
+\newcommand{\Uvec}{\mathbf{U}}
+\newcommand{\Vvec}{\mathbf{V}}
+\newcommand{\uvec}{\mathbf{u}}
+\newcommand{\xvec}{\mathbf{x}}
+\newcommand{\yvec}{\mathbf{y}}
+
+\newcommand{\Lamvec}{\mathbf{\Lambda}}
+\newcommand{\Sigvec}{\mathbf{\Sigma}}
+
+% Number systems
+\newcommand{\reals}{\mathbb{R}^n}
+\newcommand {\Z}{\mathbb{Z}}
+\newcommand {\C}{\mathbb{C}}
+\newcommand {\R}{\mathbb{R}}
+\newcommand {\Sym}{\mathbb{S}}
+\newcommand {\T}{\mathbb{T}}
+
+
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Var}{Var}
+
+
+\newtheorem{Theorem}{Theorem}
+\newtheorem{Lemma}{Lemma}
+
+% For comments
+\usepackage{color}
+\newcommand{\Acomment}[1]{\textcolor{red}{[AKB: #1]}}
+
+\begin{document}
+
+\title{Notes on developing a NEST class for a correlated Ornstein-Uhlenbeck process }
+\author{}
+\date{\today}
+\maketitle
+
+Our goal is to develop a class to produce multi-dimensional, correlated colored noise. 
+ An outline:
+\begin{enumerate}
+\item Statistics of the Ornstein-Uhlenbeck process
+\item Gillespie's ``exact" algorithm for simulating the OU process 
+\item Making the noises correlated
+\item Tests we should perform on our NEST class
+\end{enumerate}
+
+\subsection*{The Ornstein-Uhlenbeck process}
+The Ornstein-Uhlenbeck process is a linear stochastic differential equation of the following form:
+\begin{eqnarray}
+\tau \, dx_t & = & - x_t \, dt + \sigma \, dW_t
+\end{eqnarray}
+where $\tau, \sigma > 0$ are positive constants. $W_t$ is a Wiener process; given a realization $W_t$ (i.e.  a Brownian path),  the sample path $x_t$ is uniquely determined. Without loss of generality, we have constructed this process to have zero mean.
+(There are other ways to set the parameters; here we choose the format that is most likely to be relevant to our application domain, i.e. neural models.)
+\Acomment{something to think about: replace $\sigma \rightarrow \sigma \sqrt{\tau}$ i.e. make units come out cleaner?}
+
+We can solve for the sample path by variation of parameters: defining $f(x_t,t) = x_t e^{t/\tau}$, then
+\begin{eqnarray*}
+df(x_t,t) & = & x_t e^{t/\tau} /\tau \, dt + e^{t/\tau} dx_t\\
+& = & x_t e^{t/\tau} /\tau \, dt + e^{t/\tau} (- x_t \, dt + \sigma \, dW_t)/\tau\\
+& = & \frac{\sigma}{\tau} e^{t/\tau} dW_t
+\end{eqnarray*}
+Integrating from $0$ to $t$,
+\begin{eqnarray*}
+f(x_t,t)-f(x_0,0) & = & \int_0^t \frac{\sigma}{\tau} e^{s/\tau} \, ds \Rightarrow\\
+x_t & = & x_0 e^{-t/\tau} + \int_0^t \, \frac{\sigma}{\tau} e^{-(t-s)/\tau} \, dW_s
+\end{eqnarray*}
+Using the Ito isometries, we conclude that 
+\[ E[x_t] =  x_0 e^{-t/\tau}\]
+and
+\[ E[ (x_t - E[x_t])^2] =  E \left[ \left( \int_0^t \, \frac{\sigma}{\tau} e^{-(t-s)/\tau} \, dW_s \right)^2 \right] = E \left[ \int_0^t \left( \frac{\sigma}{\tau} e^{-(t-s)/\tau}  \right)^2 \, ds \right] 
+\]
+which is actually deterministic, i.e. 
+\[ E[ (x_t - E[x_t])^2] = \int_0^t \frac{\sigma^2}{\tau^2} e^{-2(t-s)/\tau}  \, ds = \frac{\sigma^2}{\tau^2} \times \frac{\tau}{2} (1-e^{-2t/\tau})
+\]
+As $t \rightarrow \infty$, we recover an invariant measure:
+\[ E[x_t] = 0; \qquad E[x_t^2]  = \frac{\sigma^2}{2\tau} 
+\]
+We can also compute the autocorrelation function
+\begin{eqnarray*} 
+C(s,t) & = & E \left[ (x_s - E[x_s])(x_t - E[x_t]) \right]\\
+ &= & E \left[   \int_0^s \, \frac{\sigma}{\tau} e^{-(s-u)/\tau} \, dW_u   \int_0^t \, \frac{\sigma}{\tau} e^{-(t-v)/\tau} \, dW_v \right]\\
+ & = & \frac{\sigma^2}{\tau^2} e^{-(s+t)/\tau} E \left[   \int_0^s \, e^{u/\tau} \, dW_u   \int_0^t e^{v/\tau} \, dW_v \right]\\
+ & = & \frac{\sigma^2}{\tau^2} e^{-(s+t)/\tau} \int_0^{{\rm min}(s,t)} e^{2u/\tau} \, du \\
+  & = & \frac{\sigma^2}{\tau^2} e^{-(s+t)/\tau} \times \frac{\tau}{2} \left( e^{2 {\rm min}(s,t)/\tau} - 1\right) \\
+   & = & \frac{\sigma^2}{2 \tau} \left( e^{-|t-s|/\tau} - e^{-(s+t)/\tau} \right)
+\end{eqnarray*}
+
+Another way to describe the invariant measure is to take the initial time as $t_0$ rather than $0$, and then let $t_0 \rightarrow -\infty$. Then we would find that:
+\[ E[x_t] = 0; \qquad E[x_t^2]  = \frac{\sigma^2}{2\tau}; \qquad C(s,t) = \frac{\sigma^2}{2 \tau}  e^{-|t-s|/\tau} =: C(t-s)
+\]
+Note that the autocorrelation function now only depends on the time lag $t-s$.
+
+\subsection*{Gillespie's ``exact" algorithm for the OU process}
+One option for simulating sample paths of an OU process, is to simply use the stochastic Euler method (ref here):
+\begin{eqnarray} 
+x_{t+\Delta t} = x_t + \Delta t \left( \frac{-x_t}{\tau} \right) + \frac{\sigma}{\tau} \sqrt{\Delta t} \, \eta_t \label{eqn:euler}
+\end{eqnarray}
+where $\eta_t$ is chosen from a standard normal distribution.
+
+Gillespie's algorithm improves on the Euler method, by exploiting the known statistics of the OU process: 
+\begin{eqnarray}
+x_{t+\Delta t} & = & x_t e^{-\Delta t/\tau} + \int_t^{t + \Delta t} \, \frac{\sigma}{\tau} e^{(t+\Delta t-s)/\tau} \, dW_s
+\end{eqnarray}
+\[ E[x_{t+\Delta t}] =  x_t e^{-\Delta t/\tau}; \qquad E\left[(x_{t+\Delta t} - E[x_{t+\Delta t}])^2\right]  = \frac{\sigma^2}{2\tau} (1-e^{-2\Delta t/\tau})
+\]
+Alternatively, you could say that the increment $x_{t+\Delta t} - x_t$ is Gaussian with mean $x_t (e^{-\Delta t/\tau}-1)$ and variance 
+$\frac{\sigma^2}{2\tau} (1-e^{-2\Delta t/\tau})$.
+
+Therefore, the formula to follow in discrete time is:
+\begin{eqnarray} 
+x_{t+\Delta t} = x_t e^{-\Delta t/\tau} + \frac{\sigma}{\sqrt{2 \tau}} \sqrt{1-e^{-2\Delta t/\tau}} \eta_t \label{eqn:gillespie}
+\end{eqnarray}
+where $\eta_t$ is drawn from a standard normal distribution.
+
+By using Taylor's formula we can readily see that Eqns. \eqref{eqn:euler} and \eqref{eqn:gillespie} are  equivalent up to $O(\Delta t)$.
+
+\subsection*{Correlated noise}
+Now suppose you want a vector of correlated noises $\xvec_t \in \R^n$, say with covariance matrix $\Cvec$; i.e. 
+\[ E \left[ \xvec_t \xvec_t^T \right] = \Cvec
+\] 
+for $t \gg 1$ (i.e. we are close enough to the stationary measure)
+Assuming that all noises have the same time constant $\tau$, here is what you do:
+
+\begin{enumerate}
+\item Use the Cholesky decomposition to find an upper triangular $\Lvec$ such that $\Cvec = \Lvec^T \Lvec.$
+\item Generate a vector $\yvec$ of $n$ independent OU processes with unit variance and time constant $\tau$ (that is, choose $\sigma = \sqrt{2 \tau}$), as described in the previous section.
+\item Use $\xvec_t = \Lvec^T \yvec_t$ as your correlated processes.
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{../Bib_files_All/RGC_3rd_order_corr_v5_Nov13,../Bib_files_All/References_texts_chapters}
+
+
+\end{document}
+

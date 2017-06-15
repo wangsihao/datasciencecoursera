@@ -1,0 +1,86 @@
+#! /bin/bash
+
+echo  "# README file for ReifModule
+#
+# A NEST mdule to implement a refractory exponential integrate-and-fire 
+# (rEIF) neural model. 
+#
+# Files included here:
+# 
+#
+#
+# PREREQUISITES TO COMPILE (instructions adapted from 
+#         <http://nest.github.io/nest-simulator/extension_modules>): 
+#
+# 1. Download, build and install NEST. The NEST source code and installation 
+#    directory must be accessible for building modules.
+#
+# 2. You will need GNU Autotools installed. 
+#
+# 3. The following environment variables should be set:
+#
+#    (where NEST_INSTALL_DIR = nest installation directory ($HOME/opt/nest is the default) )   
+#
+# a.  LD_LIBRARY_PATH (on OSX, DYLD_LIBRARY_PATH): must include 
+#
+#           $NEST_INSTALL_DIR/lib/nest
+#
+# b.  PYTHONPATH: must include 
+#
+#           $NEST_INSTALL_DIR/lib/python2.7/site-packages
+#
+#  (this is so python can find NEST. You could also set PATH< or any other env. variable 
+#  that python uses in its search path)
+#
+#
+
+# 
+# TO COMPILE (instructions adapted from <http://nest.github.io/nest-simulator/extension_modules>): 
+# 1. Copy the directory ReifModule to somewhere OUTSIDE the NEST source, build and 
+#    install directories 
+#
+# 2. In the source directory, ReifModule, run the bootstrap script:
+#
+#     >> ./bootstrap.sh
+#
+#    This will create a bunch of additional files in the source directory
+#
+# 3. Leave ReifModule and create a build directory for it: i.e.
+#
+#     >> cd ..
+#     >> mkdir rmb
+#     >> cd rmb
+#
+# 4. Configure using:
+#
+#     >> ../ReifModule/configure --with-nest=${NEST_INSTALL_DIR}/bin/nest-config
+#     >>
+#
+# 5. Compile
+#
+#     >> make
+#     >> make install
+#
+#
+# TO USE (the following is for PyNEST):
+#
+# 0. See previous comment about setting LD_LIBRARY_PATH (or DYLD_...)
+#
+# 1. Start python and import NEST:
+#
+#    >> python
+#    Python ?.?.? <blah blah more version stuff here >
+#    >>> import nest
+#
+# 2. >> nest.Install("reifmodule")
+#
+#    The classes in the module are now available. The "reif_cond_alpha_RK5" type is
+#    now available as any other neuron type. For example, you can use the command
+#
+#    >>> neurons = nest.Create('reif_cond_alpha_RK5')
+#  
+#    You should also see it in the model list when you run
+#
+#    >>> nest.Models()
+#
+# "

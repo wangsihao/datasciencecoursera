@@ -1,0 +1,191 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+%\usepackage{epic,eepic}
+
+%\usepackage{graphics}
+\usepackage{graphicx}
+%\usepackage{epstopdf}
+
+
+% To use Author, Year (Harvard) citations
+%\usepackage[round]{natbib}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+
+\usepackage{fullpage}
+
+\newcommand{\vvec}{\mathbf{v}}
+\newcommand{\Avec}{\mathbf{A}}
+\newcommand{\Gvec}{\mathbf{G}}
+\newcommand{\Hvec}{\mathbf{H}}
+
+\newcommand{\Ivec}{\mathbf{I}}
+\newcommand{\Jvec}{\mathbf{J}}
+\newcommand{\Kvec}{\mathbf{K}}
+\newcommand{\Mvec}{\mathbf{M}}
+\newcommand{\Uvec}{\mathbf{U}}
+\newcommand{\Vvec}{\mathbf{V}}
+\newcommand{\uvec}{\mathbf{u}}
+\newcommand{\xvec}{\mathbf{x}}
+
+\newcommand{\Lamvec}{\mathbf{\Lambda}}
+\newcommand{\Sigvec}{\mathbf{\Sigma}}
+
+% Number systems
+\newcommand{\reals}{\mathbb{R}^n}
+\newcommand {\Z}{\mathbb{Z}}
+\newcommand {\C}{\mathbb{C}}
+\newcommand {\R}{\mathbb{R}}
+\newcommand {\Sym}{\mathbb{S}}
+\newcommand {\T}{\mathbb{T}}
+
+
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Var}{Var}
+
+
+\newtheorem{Theorem}{Theorem}
+\newtheorem{Lemma}{Lemma}
+
+% For comments
+\usepackage{color}
+\newcommand{\Acomment}[1]{\textcolor{red}{[AKB: #1]}}
+
+\begin{document}
+
+\title{Notes on fitting the rEIF model to data from dynamic clamp recordings}
+\author{}
+\date{\today}
+\maketitle
+\begin{center}
+Student: Keon Ebrahimi\\
+Supervisor: Andrea K. Barreiro
+\end{center}
+
+We consider fitting the \textit{refractory exponential integrate and fire} (rEIF) model to data from retinal ganglion cells. 
+We wish to model
+\begin{eqnarray}
+\frac{dV}{dt} & = &  f(V,t-t_{spike}) + \frac{I_{syn}(t)}{C}   \label{eqn:EIF_balance}
+\end{eqnarray}
+where
+\begin{eqnarray}
+f(V,t-t_{spike}) & = & \frac{1}{\tau_m} \left(E_L - V + \Delta_T e^{(V-V_T)/\Delta_T} \right) \label{eqn:fI_shape}
+\end{eqnarray}
+and 
+\begin{eqnarray}
+I_{syn}(t) & = & -g_{exc}(t)(V-V_{exc}) - g_{inh}(t)(V-V_{inh})
+\end{eqnarray}
+(We use the subscript ``syn" because these currents are presumed to result from excitatory and inhibitory synapses). We will assume that the parameters $\tau_m$, $E_L$, $\Delta_T$, and $V_T$ actually depend on the time that has elapsed since the last spike: i.e. $t-t_{spike}$. We are given a long time sequence of voltage and conductance measurements at equally spaced time intervals, $t_n = n \, \delta t$: i.e.  $V(n \, \delta t)$, $g_{exc}(n \, \delta t)$ and $g_{inh}(n \,  \delta t)$.
+ 
+Our goal is to infer an appropriate functional form for the parameters $\tau_m$, etc... Furthermore, we must infer the capacitance $C$, voltage reset $V_r$, and voltage threshold $V_{th}$. 
+
+\section{Input data}
+Our input data is in the form of a MATLAB file (\texttt{ON\_parasol\_dclamp.mat}) which contains:\\
+
+\noindent
+\texttt{exc\_high\_same}: 1 $\times N_t$ array of excitatory conductances\\
+\texttt{inh\_highc\_same}: 1 $\times N_t$ array of inhibitory conductances\\
+\texttt{highc\_same}: 8 $\times N_t$ array of voltage values\\
+
+The voltage array contains data from 8 trials and is in units of volts (V).
+All of the above were with a high contrast stimulus. Everything is sampled at a rate of $0.1$ ms ($10^4$ Hz).
+(The conductance arrays were normalized: to get the original values, multiply by $A_{exc} = 30$ nS, $A_{inh} = 40$ nS).
+
+Then there are three other arrays, which contain the analogous information for a low contrast stimulus.
+(\texttt{exc\_low\_same}, \texttt{inh\_low\_same}, \texttt{lowc\_same}).
+ 
+\section{Basic idea}
+The theoretical underpinning of this fitting is the following (as described in Badel): 
+``basic electrophysiology" provides the following relationship between the capacitive charging current $C \frac{dV}{dt}$, the transmembrane current $I_m$, and the injected current $I_{in}$:
+\begin{eqnarray}
+C \frac{dV}{dt} + I_m(V, t) + I_{noise}(t) & = & I_{in}(t)   \label{eqn:Badel_balance}
+\end{eqnarray}
+$I_{noise}$ contains current from unmodelled sources. 
+We know $I_{in}$ and $V$ as a function of time, because we have data from an experiment in which $I_{in}$ was injected into a neuron (via dynamic clamp) and $V(t)$ was measured. Our goal is to infer $I_m(V,t)$. We hypothesize that $I_m$ can be written as a function of $V$ and the time since the last spike $t-t_{spike}$: matching Eqn.  (\ref{eqn:Badel_balance}) with Eqn.  (\ref{eqn:EIF_balance}),
+\[ \frac{I_m(V,t)}{C}  =  -f(V, t-t_{spike})
+\]
+
+Badel et al. refers to this relationship as a \textit{dynamic I-V curve}. (It is ``dynamic" because it depends on time as well as voltage). Rewriting Eqn. \ref{eqn:Badel_balance},
+\begin{eqnarray}
+I_m(V, t) + I_{noise}(t) & = & I_{in}(t) - C \frac{dV}{dt}   \label{known_vs_unknown}
+\end{eqnarray}
+we assume that for a fixed $V$ and $t-t_{spike}$, we can best estimate $f$ by assuming that $I_{noise}$ has zero mean: therefore
+\begin{eqnarray}
+f(V, b) & \approx & Mean[I_m(v, t) + I_{noise}(t) ] \; \bigg|_{v = V, \, t-t_{spike}=b}
+\end{eqnarray}
+
+\noindent
+Here are what I see as the main steps we will need to take:
+\begin{enumerate}
+\item Find spike times
+\item Estimate capacitance $C$.
+\item Fit $f(V,t-t_{spike})$: long-time data
+\begin{enumerate}
+\item  Suggestion: develop and check your procedure with ``long time" data: $t-t_{spike} > T_0$. 
+\item First, use low voltage $V < V_0$ to extract $\tau_m$ and $E_L$.
+\item Then use what remains of $f(V)$ to find $\Delta_T$ and $V_T$.
+\end{enumerate}
+\item Fit $f(V,t-t_{spike})$: all time windows
+\item Decide on $V_r$, $V_{th}$
+\item \textit{(and finally...)} to what extent does our new model recreate our original spike trains?
+\end{enumerate}
+%
+%If the parameters $\tau_m$, $E_L$, $\Delta_T$, and $V_T$ did \textit{not} depend on $t-t_{spike}$
+
+\section*{Step 1: Find spike times}
+We first need to be able to separate data by the time that has elapsed since the last spike. So, we first need to know when spikes occurred!\\
+
+\noindent
+\textbf{Deliverable:} Function that returns a list of spike times, given: voltage data at equi-spaced time points, time interval width $\delta t$.
+
+\noindent
+\textbf{Suggestion:} Use an upward threshold crossing. Try for varying values of $V_{th}$, to check robustness: does it matter which value we choose?  
+
+\section*{Step 2: Find capacitance}
+We hypothesize that capacitance is the quantity $C$ that will minimize the variance of 
+\[  f(V) = \frac{1}{C} \left( I_{syn} - C\frac{dV}{dt} \right)
+\]
+at a specific $V$.
+
+Badel justifies this in their Eqns. 5, 6: rewriting Eqn. (\ref{known_vs_unknown}) by dividing by a \textit{hypothetical}, possibly incorrect capacitance $C_e$:
+\begin{eqnarray}
+\frac{I_{in}}{C_e} - \frac{dV}{dt} & = & \frac{I_m}{C} + \left( \frac{1}{C} - \frac{1}{C_e} \right) I_{in} + \frac{I_{noise}}{C}
+\end{eqnarray}
+Then 
+\begin{eqnarray}
+\Var \left[ \frac{I_{in}}{C_e} - \frac{dV}{dt} \right]_V & = & \Var \left[ \frac{I_m}{C}  \right]_V + \Var \left[ \left( \frac{1}{C} - \frac{1}{C_e} \right) I_{in}  \right]_V + \Var \left[ \frac{I_{noise}}{C} \right]_V\\
+& = & \Var \left[ \frac{I_m}{C}  \right]_V + \left( \frac{1}{C} - \frac{1}{C_e} \right)^2 \Var \left[ I_{in}  \right]_V + \Var \left[ \frac{I_{noise}}{C} \right]_V
+\end{eqnarray}
+assuming that $I_{in}$, $I_m$ and $I_{noise}$ are independent. The subscript $V$ indicates that we should only consider data at a specific value of the voltage $V$. Notice that the only quantity in the last equation that changes as $C_e$ changes is the squared difference between $1/C$ and $1/C_e$; this is minimized precisely when $C = C_e$! \\
+
+\noindent
+\textbf{Deliverable:} Function that returns an estimated capacitance.
+
+\noindent
+\textbf{Things to consider:} Must use data at a fixed voltage (or in a small voltage interval $(V-\Delta V, V+\Delta V)$); also only use data for long $t-t_{spike} > T_0$. Try it for different $T_0$: does your answer change? Create plots like Fig. 1C and 1D in Badel to see if you get what you expect. 
+
+
+%Error in this expression reflects either noise (unmodelled currents) or inaccuracy in the model.  
+\section*{Step 3: Preliminary work: establish a procedure to get $g_L$, $E_L$, $\Delta_T$ and $V_T$}
+ Use long time data $t-t_{spike} > T_0$.
+
+ 
+%\vspace{1in}
+%(Note: we could, equivalently, have written this as
+%\begin{eqnarray}
+%C \frac{dV}{dt} & = &  \frac{1}{\tau_m} \left(E_L - V + \Delta_T e^{(V-V_T)/\Delta_T} \right) \label{eqn:fI_shape}
+%\end{eqnarray}
+%FILL IN LATER
+%\vspace{1in}
+%
+
+
+\bibliographystyle{plain}
+\bibliography{../Bib_files_All/RGC_3rd_order_corr_v5_Nov13,../Bib_files_All/References_texts_chapters}
+
+
+\end{document}
+
